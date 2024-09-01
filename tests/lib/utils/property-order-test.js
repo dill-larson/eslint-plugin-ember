@@ -360,6 +360,16 @@ describe('determinePropertyType', () => {
       expect(propertyOrder.determinePropertyType(node, 'controller')).toBe('constructor');
     });
 
+    it('should determine component lifecycle hooks', () => {
+      const context = new FauxContext(
+        `class MyComponent extends Component {
+            willDestroy() {}
+          }`
+      );
+      const node = context.ast.body[0].body.body[0];
+      expect(propertyOrder.determinePropertyType(node, 'component', [])).toBe('willDestroy');
+    });
+
     it('should determine query-params', () => {
       const context = new FauxContext(
         `class MyController extends Controller {
