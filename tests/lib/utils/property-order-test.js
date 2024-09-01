@@ -421,6 +421,17 @@ describe('determinePropertyType', () => {
       ).toBe('observer');
     });
 
+    it('should determine actions', () => {
+      const context = new FauxContext(
+        `import {action} from '@ember/object';
+        class MyComponent extends Component {
+          @action fooAction() {};
+        }`
+      );
+      const node = context.ast.body[1].body.body[0];
+      expect(propertyOrder.determinePropertyType(node, 'component')).toBe('actions');
+    });
+
     it('should determine single-line functions', () => {
       const context = new FauxContext(
         `class MyComponent extends Component {
