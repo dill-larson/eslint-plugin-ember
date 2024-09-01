@@ -481,7 +481,7 @@ describe('determinePropertyType', () => {
         }`
       );
       const node = context.ast.body[1].body.body[0];
-      expect(propertyOrder.determinePropertyType(node, 'component')).toBe('actions');
+      expect(propertyOrder.determinePropertyType(node, 'component')).toBe('action');
     });
 
     it('should determine empty methods', () => {
