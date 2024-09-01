@@ -421,6 +421,32 @@ describe('determinePropertyType', () => {
       ).toBe('observer');
     });
 
+    it('should determine single-line getters', () => {
+      const context = new FauxContext(
+        `class MyComponent extends Component {
+              get myProp() {};
+            }`
+      );
+      const node = context.ast.body[0].body.body[0];
+      expect(propertyOrder.determinePropertyType(node, 'component', [])).toBe(
+        'single-line-function'
+      );
+    });
+
+    it('should determine multi-line getters', () => {
+      const context = new FauxContext(
+        `class MyComponent extends Component {
+            get myProp() {
+                console.log('bar');
+            };
+          }`
+      );
+      const node = context.ast.body[0].body.body[0];
+      expect(propertyOrder.determinePropertyType(node, 'component', [])).toBe(
+        'multi-line-function'
+      );
+    });
+
     it('should determine actions', () => {
       const context = new FauxContext(
         `import {action} from '@ember/object';
@@ -432,17 +458,17 @@ describe('determinePropertyType', () => {
       expect(propertyOrder.determinePropertyType(node, 'component')).toBe('actions');
     });
 
-    it('should determine single-line functions', () => {
+    it('should determine empty methods', () => {
       const context = new FauxContext(
         `class MyComponent extends Component {
           foo() {}
         }`
       );
       const node = context.ast.body[0].body.body[0];
-      expect(propertyOrder.determinePropertyType(node, 'component')).toBe('single-line-function');
+      expect(propertyOrder.determinePropertyType(node, 'component', [])).toBe('empty-method');
     });
 
-    it('should determine multi-line functions', () => {
+    it('should determine methods', () => {
       const context = new FauxContext(
         `class MyComponent extends Component {
           foo(bar) {
@@ -451,9 +477,7 @@ describe('determinePropertyType', () => {
         }`
       );
       const node = context.ast.body[0].body.body[0];
-      expect(propertyOrder.determinePropertyType(node, 'component', [])).toBe(
-        'multi-line-function'
-      );
+      expect(propertyOrder.determinePropertyType(node, 'component', [])).toBe('method');
     });
 
     it('should determine properties', () => {
