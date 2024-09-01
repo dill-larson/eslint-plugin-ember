@@ -447,6 +447,32 @@ describe('determinePropertyType', () => {
       );
     });
 
+    it('should determine single-line setters', () => {
+      const context = new FauxContext(
+        `class MyComponent extends Component {
+                set myProp(bar) {};
+              }`
+      );
+      const node = context.ast.body[0].body.body[0];
+      expect(propertyOrder.determinePropertyType(node, 'component', [])).toBe(
+        'single-line-function'
+      );
+    });
+
+    it('should determine multi-line setters', () => {
+      const context = new FauxContext(
+        `class MyComponent extends Component {
+              set myProp(bar) {
+                  console.log(bar);
+              };
+            }`
+      );
+      const node = context.ast.body[0].body.body[0];
+      expect(propertyOrder.determinePropertyType(node, 'component', [])).toBe(
+        'multi-line-function'
+      );
+    });
+
     it('should determine actions', () => {
       const context = new FauxContext(
         `import {action} from '@ember/object';
