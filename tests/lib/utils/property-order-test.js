@@ -350,6 +350,16 @@ describe('determinePropertyType', () => {
       expect(propertyOrder.determinePropertyType(node, 'controller')).toBe('init');
     });
 
+    it('should determine constructor-type props', () => {
+      const context = new FauxContext(
+        `class MyController extends Controller {
+            constructor() {}
+          }`
+      );
+      const node = context.ast.body[0].body.body[0];
+      expect(propertyOrder.determinePropertyType(node, 'controller')).toBe('constructor');
+    });
+
     it('should determine query-params', () => {
       const context = new FauxContext(
         `class MyController extends Controller {
