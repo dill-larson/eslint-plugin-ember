@@ -29,6 +29,7 @@ const rules = {
         'single-line-function',
         'multi-line-function',
         'observer',
+        'constructor'
         'init',
         'didReceiveAttrs',
         'willRender',
@@ -38,9 +39,11 @@ const rules = {
         'didUpdateAttrs',
         'willUpdate',
         'didUpdate',
+        'willDestroy',
         'willDestroyElement',
         'willClearRender',
         'didDestroyElement',
+        'action',
         'actions',
         'method'
       ]
@@ -57,6 +60,7 @@ order: [
   'property',
   ['single-line-function', 'multi-line-function'],
   'observer',
+  'constructor',
   'init',
   'didReceiveAttrs',
   'willRender',
@@ -66,11 +70,13 @@ order: [
   'didUpdateAttrs',
   'willUpdate',
   'didUpdate',
+  'willDestroy',
   'willDestroyElement',
   'willClearRender',
   'didDestroyElement',
+  'action',
   'actions',
-  ['method', 'empty-method']
+  ['method', 'empty-method'],
 ];
 ```
 
@@ -88,8 +94,8 @@ You should write code grouped and ordered in this way:
 
 1. Services
 2. Default values
-3. Single line computed properties
-4. Multiline computed properties
+3. Single line computed properties / getters & setters
+4. Multiline computed properties / getters & setters
 5. Observers
 6. Lifecycle Hooks (in execution order)
 7. Actions
@@ -101,7 +107,7 @@ You should write code grouped and ordered in this way:
 const {
   Component,
   computed,
-  inject: { service }
+  inject: { service },
 } = Ember;
 const { alias } = computed;
 
@@ -146,18 +152,67 @@ export default Component.extend({
   actions: {
     sneakyAction() {
       return this._secretMethod();
-    }
+    },
   },
 
   // 9. Custom / private methods
   _secretMethod() {
     // custom secret method logic
-  }
+  },
 });
 ```
 
-## Help Wanted
+```js
+import { action } from "@ember/object";
+import { inject as service } from '@ember/service';
+import { tracked } from "@glimmer/tracking";
+import Component from '@glimmer/component';
 
-| Issue | Link |
-| :-- | :-- |
-| ❌ Missing native JavaScript class support | [#560](https://github.com/ember-cli/eslint-plugin-ember/issues/560) |
+export default class ExampleClass extends Component {
+  // 1. Services
+  @service() i18n;
+
+  // 2. Properties
+  @tracked fooBar;
+  role = 'sloth';
+
+  // 3. Empty methods
+  onRoleChange() {},
+
+  // 4. Single line getters/setters or Computed property
+  @alias('car') get vehicle() {}
+
+  // 5. Multiline getters/setters or Computed property
+  @computed('attitude', 'health')
+  get levelOfHappiness() {
+    const result = this.attitude * this.health * Math.random();
+    return result;
+  }
+
+  // 6. Observers
+  @observer('vehicle')
+  onVehicleChange() {
+    // observer logic
+  }
+
+  // 7. Lifecycle Hooks
+  constructor(owner, args) {
+    // custom constructor logic
+  }
+
+  willDestroy() {
+    // custom willDestroy logic
+  }
+
+  // 8. Actions
+  @action
+  sneakyAction() {
+    return this._secretMethod();
+  }
+
+  // 9. Custom / private methods
+  _secretMethod() {
+    // custom secret method logic
+  }
+}
+```
