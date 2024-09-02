@@ -266,12 +266,22 @@ describe('determinePropertyType', () => {
     });
 
     it('should determine methods', () => {
-      const context = new FauxContext(
+      let context = new FauxContext(
         `export default Component.extend({
           foo() { console.log("hello") }
         });`
       );
-      const node = context.ast.body[0].declaration.arguments[0].properties[0];
+      let node = context.ast.body[0].declaration.arguments[0].properties[0];
+      expect(propertyOrder.determinePropertyType(node, 'component', [])).toBe('method');
+
+      context = new FauxContext(
+        `export default Component.extend({
+          fooTask: task(function* () {
+            console.log("bar");
+          })
+        });`
+      );
+      node = context.ast.body[0].declaration.arguments[0].properties[0];
       expect(propertyOrder.determinePropertyType(node, 'component', [])).toBe('method');
     });
 
@@ -462,10 +472,37 @@ describe('determinePropertyType', () => {
     it('should determine multi-line setters', () => {
       const context = new FauxContext(
         `class MyComponent extends Component {
-              set myProp(bar) {
-                  console.log(bar);
-              };
-            }`
+          set myProp(bar) {
+              console.log(bar);
+          };
+        }`
+      );
+      const node = context.ast.body[0].body.body[0];
+      expect(propertyOrder.determinePropertyType(node, 'component', [])).toBe(
+        'multi-line-function'
+      );
+    });
+
+    it('should determine single-line functions', () => {
+      const context = new FauxContext(
+        `class MyComponent extends Component {
+          @computed get myProp() {};
+        }`
+      );
+      const node = context.ast.body[0].body.body[0];
+      expect(propertyOrder.determinePropertyType(node, 'component', [])).toBe(
+        'single-line-function'
+      );
+    });
+
+    it('should determine multi-line functions', () => {
+      const context = new FauxContext(
+        `class MyComponent extends Component {
+          @computed
+          get myProp() {
+              console.log('bar');
+          };
+        }`
       );
       const node = context.ast.body[0].body.body[0];
       expect(propertyOrder.determinePropertyType(node, 'component', [])).toBe(
@@ -495,14 +532,35 @@ describe('determinePropertyType', () => {
     });
 
     it('should determine methods', () => {
-      const context = new FauxContext(
+      let context = new FauxContext(
         `class MyComponent extends Component {
           foo(bar) {
             console.log(bar)
           }
         }`
       );
-      const node = context.ast.body[0].body.body[0];
+      let node = context.ast.body[0].body.body[0];
+      expect(propertyOrder.determinePropertyType(node, 'component', [])).toBe('method');
+
+      context = new FauxContext(
+        `class MyComponent extends Component {
+          fooTask = task(async () => {
+            console.log('foo');
+          })
+        }`
+      );
+      node = context.ast.body[0].body.body[0];
+      expect(propertyOrder.determinePropertyType(node, 'component', [])).toBe('method');
+
+      context = new FauxContext(
+        `class trackedMyComponent extends Component {
+          @task
+          fooTask2() {
+            console.log('foo');
+          }
+        }`
+      );
+      node = context.ast.body[0].body.body[0];
       expect(propertyOrder.determinePropertyType(node, 'component', [])).toBe('method');
     });
 
