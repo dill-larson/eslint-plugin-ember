@@ -42,13 +42,13 @@ describe('isCallExpression', () => {
 });
 
 describe('isCallWithFunctionExpression', () => {
-  let node = parse('mysteriousFnc(function(){})');
   it('should check if node is call with function expression', () => {
+    const node = parse('mysteriousFnc(function(){})');
     expect(types.isCallWithFunctionExpression(node)).toBeTruthy();
   });
 
-  node = parse('mysteriousFnc(() => {})');
   it('should check if node is call with arrow function expression', () => {
+    const node = parse('mysteriousFnc(() => {})');
     expect(types.isCallWithFunctionExpression(node)).toBeTruthy();
   });
 });
