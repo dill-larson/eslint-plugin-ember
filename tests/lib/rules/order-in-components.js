@@ -16,7 +16,7 @@ const eslintTester = new RuleTester({
 
 eslintTester.run('order-in-components', rule, {
   valid: [
-    // Class classes
+    //#region Classic classes - valid
     'export default Component.extend();',
     'export default Component.extend({ ...foo });',
     `export default Component.extend({
@@ -365,9 +365,11 @@ eslintTester.run('order-in-components', rule, {
       ],
       parserOptions: { ecmaVersion: 2022, sourceType: 'module' },
     },
-    // Native classes
+    //#endregion
+    //#region Native classes - valid
     'export default class Component {};',
-    `export default class Test extends Component {
+    `import Component from "@glimmer/component";
+    export default class Test extends Component {
       role = "sloth"
 
       @alias("car")
@@ -379,7 +381,8 @@ eslintTester.run('order-in-components', rule, {
       @action
       foo() {}
     };`,
-    `export default class Test extends Component {
+    `import Component from "@glimmer/component";
+    export default class Test extends Component {
       role = ${`${'sloth'}`}
 
       @alias("car")
@@ -391,7 +394,8 @@ eslintTester.run('order-in-components', rule, {
       @action
       foo() {}
     };`,
-    `export default class Component {
+    `import Component from "@glimmer/component";
+    export default class Test extends Component {
       role = "sloth";
 
       @computed("attitude", "health")
@@ -400,25 +404,29 @@ eslintTester.run('order-in-components', rule, {
       @action
       foo() {}
     };`,
-    `export default class Component {
+    `import Component from "@glimmer/component";
+    export default class Test extends Component {
       @computed("attitude", "health")
       get levelOfHappiness() {}
 
       @action
       foo() {}
     };`,
-    `export default class extends Component.extend(TestMixin) {
+    `import Component from '@ember/component';
+    export default class extends Component.extend(TestMixin) {
       @computed("attitude", "health")
       get levelOfHappiness(){}
     };`,
-    `export default class extends Component.extend(TestMixin, TestMixin2) {
+    `import Component from '@ember/component';
+    export default class extends Component.extend(TestMixin, TestMixin2) {
       @computed("attitude", "health")
       get levelOfHappiness(){}
 
       @action
       foo() {}
     };`,
-    `export default class extends Component {
+    `import Component from '@glimmer/component';
+    export default class extends Component {
       @Ember.inject.service abc;
 
       @inject.service def;
@@ -430,7 +438,8 @@ eslintTester.run('order-in-components', rule, {
       @computed("attitude", "health")
       get levelOfHappiness(){}
     };`,
-    `import { inject } from '@ember/service';
+    `import Component from '@glimmer/component';
+    import { inject } from '@ember/service';
     export default class extends Component {
       @inject abc;
 
@@ -439,7 +448,8 @@ eslintTester.run('order-in-components', rule, {
       @computed("attitude", "health")
       get levelOfHappiness(){}
     };`,
-    `export default class extends Component {
+    `import Component from '@glimmer/component';
+    export default class extends Component {
       role = "sloth";
       abc = [];
       def = {};
@@ -447,7 +457,8 @@ eslintTester.run('order-in-components', rule, {
       @alias("def")
       ghi;
     };`,
-    `export default class extends Component {
+    `import Component from '@glimmer/component';
+    export default class extends Component {
       @computed("attitude", "health")
       get levelOfHappiness(){}
 
@@ -460,7 +471,8 @@ eslintTester.run('order-in-components', rule, {
       @action
       foo() {}
     };`,
-    `export default class extends Component {
+    `import Component from '@glimmer/component';
+    export default class extends Component {
       @observer("aaaa")
       get abc() {}
 
@@ -470,7 +482,8 @@ eslintTester.run('order-in-components', rule, {
         return true;
       }
     };`,
-    `export default class extends Component {
+    `import Component from '@glimmer/component';
+    export default class extends Component {
       @service igh;
 
       abc = [];
@@ -493,7 +506,8 @@ eslintTester.run('order-in-components', rule, {
         return true;
       }
     };`,
-    `export default class extends Component {
+    `import Component from '@glimmer/component';
+    export default class extends Component {
       init() {
       }
       didReceiveAttrs() {
@@ -522,7 +536,8 @@ eslintTester.run('order-in-components', rule, {
       @action
       foo() {}
     };`,
-    `export default class extends Component {
+    `import Component from '@glimmer/component';
+    export default class extends Component {
       @service test;
 
       get test2() {
@@ -535,7 +550,8 @@ eslintTester.run('order-in-components', rule, {
       @task({ restartable: true })
       *tSomeAction() {}
     };`,
-    `export default class extends Component {
+    `import Component from '@glimmer/component';
+    export default class extends Component {
       @service test
 
       @computed.equal("asd", "qwe")
@@ -547,7 +563,8 @@ eslintTester.run('order-in-components', rule, {
       @task({ restartable: true })
       *tSomeAction() {}
     };`,
-    `export default class extends Component {
+    `import Component from '@glimmer/component';
+    export default class extends Component {
       @service test
 
       someEmptyMethod() {}
@@ -562,7 +579,8 @@ eslintTester.run('order-in-components', rule, {
         return true;
       }
     };`,
-    `export default class extends Component {
+    `import Component from '@glimmer/component';
+    export default class extends Component {
       classNameBindings = ["filterDateSelectClass"];
       content = [];
       currentMonthEndDate = null;
@@ -572,7 +590,8 @@ eslintTester.run('order-in-components', rule, {
       typeOfDate = null;
       action = K;
     };`,
-    `export default class extends Component {
+    `import Component from '@glimmer/component';
+    export default class extends Component {
       role = "sloth"
 
       @computed.or("asd", "qwe")
@@ -592,7 +611,8 @@ eslintTester.run('order-in-components', rule, {
       foo() {}
     };`,
     {
-      code: `export default class extends Component {
+      code: `import Component from '@glimmer/component';
+      export default class extends Component {
         role = "sloth"
 
         @computed()
@@ -614,7 +634,8 @@ eslintTester.run('order-in-components', rule, {
       ],
     },
     {
-      code: `export default class extends Component {
+      code: `import Component from '@glimmer/component';
+      export default class extends Component {
         role = "sloth";
 
         @alias('computed2')
@@ -639,7 +660,8 @@ eslintTester.run('order-in-components', rule, {
         },
       ],
     },
-    `export default class extends Component {
+    `import Component from '@glimmer/component';
+    export default class extends Component {
       role = "sloth";
       qwe = foo ? 'bar' : null;
       abc = [];
@@ -648,20 +670,23 @@ eslintTester.run('order-in-components', rule, {
       @alias("def")
       ghi
     };`,
-    `export default class extends Component {
+    `import Component from '@glimmer/component';
+    export default class extends Component {
       template = hbs\`Hello world {{name}}\`;
       name = "Jon Snow";
       @action
       foo() {}
     };`,
-    `export default class extends Component {
+    `import Component from '@glimmer/component';
+    export default class extends Component {
       layout = layout;
       tabindex = -1;
 
       @computed.reads('count')
       get someComputedValue() {}
     };`,
-    `export default class extends Component {
+    `import Component from '@glimmer/component';
+    export default class extends Component {
       onFoo() {}
 
       @computed.volatile()
@@ -672,7 +697,8 @@ eslintTester.run('order-in-components', rule, {
       get bar() {}
     };`,
     {
-      code: `export default class extends Component {
+      code: `import Component from '@glimmer/component';
+      export default class extends Component {
         onFoo() {}
         onFoo = () => {};
 
@@ -695,7 +721,25 @@ eslintTester.run('order-in-components', rule, {
       ],
       parserOptions: { ecmaVersion: 2022, sourceType: 'module' },
     },
-    `export default class Test extends Component {
+    {
+      code: `import Component from '@glimmer/component';
+      export default class extends Component {
+        prop = null;
+
+        @action
+        foo() {}
+
+        customProp = { a: 1 }
+      };`,
+      options: [
+        {
+          order: ['property', 'action', 'custom:customProp', 'method'],
+        },
+      ],
+      parserOptions: { ecmaVersion: 2022, sourceType: 'module' },
+    },
+    `import Component from '@glimmer/component';
+    export default class Test extends Component {
       role = "sloth"
 
       get vehicle() {}
@@ -710,8 +754,8 @@ eslintTester.run('order-in-components', rule, {
       @action
       foo() {}
     };`,
-    // <-- HERE
-    `export default class Test extends Component {
+    `import Component from '@glimmer/component';
+    export default class Test extends Component {
       @service() fooService;
 
       get vehicle() {}
@@ -725,8 +769,9 @@ eslintTester.run('order-in-components', rule, {
       @action
       foo() {}
     };`,
-    `export default class Test extends Component {
-      @tracked  
+    `import Component from '@glimmer/component';
+    export default class Test extends Component {
+      @tracked
       role = "sloth";
 
       get vehicle() {}
@@ -734,14 +779,16 @@ eslintTester.run('order-in-components', rule, {
       constructor() {}
 
       fooTask = task(async () => {
-        this.role = "bar";  
+        this.role = "bar";
       });
 
       @action
       foo() {}
     };`,
+    //#endregion
   ],
   invalid: [
+    //#region Classic classes - invalid
     {
       code: `export default Component.extend({
         actions: {},
@@ -1453,5 +1500,6 @@ eslintTester.run('order-in-components', rule, {
         },
       ],
     },
+    //#endregion
   ],
 });
