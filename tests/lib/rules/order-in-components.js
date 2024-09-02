@@ -16,6 +16,7 @@ const eslintTester = new RuleTester({
 
 eslintTester.run('order-in-components', rule, {
   valid: [
+    // Class classes
     'export default Component.extend();',
     'export default Component.extend({ ...foo });',
     `export default Component.extend({
@@ -364,6 +365,381 @@ eslintTester.run('order-in-components', rule, {
       ],
       parserOptions: { ecmaVersion: 2022, sourceType: 'module' },
     },
+    // Native classes
+    'export default class Component {};',
+    `export default class Test extends Component {
+      role = "sloth"
+
+      @alias("car")
+      get vehicle() {}
+
+      @computed("attitude", "health")
+      get levelOfHappiness() {}
+
+      @action
+      foo() {}
+    };`,
+    `export default class Test extends Component {
+      role = ${`${'sloth'}`}
+
+      @alias("car")
+      get vehicle() {}
+
+      @computed("attitude", "health")
+      get levelOfHappiness() {}
+
+      @action
+      foo() {}
+    };`,
+    `export default class Component {
+      role = "sloth";
+
+      @computed("attitude", "health")
+      get levelOfHappiness() {}
+
+      @action
+      foo() {}
+    };`,
+    `export default class Component {
+      @computed("attitude", "health")
+      get levelOfHappiness() {}
+
+      @action
+      foo() {}
+    };`,
+    `export default class extends Component.extend(TestMixin) {
+      @computed("attitude", "health")
+      get levelOfHappiness(){}
+    };`,
+    `export default class extends Component.extend(TestMixin, TestMixin2) {
+      @computed("attitude", "health")
+      get levelOfHappiness(){}
+
+      @action
+      foo() {}
+    };`,
+    `export default class extends Component {
+      @Ember.inject.service abc;
+
+      @inject.service def;
+
+      @service ghi;
+
+      role = "sloth";
+
+      @computed("attitude", "health")
+      get levelOfHappiness(){}
+    };`,
+    `import { inject } from '@ember/service';
+    export default class extends Component {
+      @inject abc;
+
+      role = "sloth";
+
+      @computed("attitude", "health")
+      get levelOfHappiness(){}
+    };`,
+    `export default class extends Component {
+      role = "sloth";
+      abc = [];
+      def = {};
+
+      @alias("def")
+      ghi;
+    };`,
+    `export default class extends Component {
+      @computed("attitude", "health")
+      get levelOfHappiness(){}
+
+      @observer("aaaa")
+      get abc() {}
+
+      @observer("aaaa")
+      get def() {}
+
+      @action
+      foo() {}
+    };`,
+    `export default class extends Component {
+      @observer("aaaa")
+      get abc() {}
+
+      init() {}
+
+      customFunc() {
+        return true;
+      }
+    };`,
+    `export default class extends Component {
+      @service igh;
+
+      abc = [];
+      def = true;
+
+      @alias("abc") singleComp
+
+      @computed()
+      get multiComp() {}
+
+      @observer("aaa")
+      get obs() {}
+
+      init() {}
+
+      @action
+      foo() {}
+
+      customFunc() {
+        return true;
+      }
+    };`,
+    `export default class extends Component {
+      init() {
+      }
+      didReceiveAttrs() {
+      }
+      willRender() {
+      }
+      willInsertElement() {
+      }
+      didInsertElement() {
+      }
+      didRender() {
+      }
+      didUpdateAttrs() {
+      }
+      willUpdate() {
+      }
+      didUpdate() {
+      }
+      willDestroyElement() {
+      }
+      willClearRender() {
+      }
+      didDestroyElement() {
+      }
+
+      @action
+      foo() {}
+    };`,
+    `export default class extends Component {
+      @service test;
+
+      get test2() {
+        return "asd" === "qwe";
+      }
+
+      didReceiveAttrs() {
+      }
+
+      @task({ restartable: true })
+      *tSomeAction() {}
+    };`,
+    `export default class extends Component {
+      @service test
+
+      @computed.equal("asd", "qwe")
+      get test2() {}
+
+      didReceiveAttrs() {
+      }
+
+      @task({ restartable: true })
+      *tSomeAction() {}
+    };`,
+    `export default class extends Component {
+      @service test
+
+      someEmptyMethod() {}
+
+      didReceiveAttrs() {
+      }
+
+      @task({ restartable: true })
+      *tSomeAction() {}
+
+      _anotherPrivateFnc() {
+        return true;
+      }
+    };`,
+    `export default class extends Component {
+      classNameBindings = ["filterDateSelectClass"];
+      content = [];
+      currentMonthEndDate = null;
+      currentMonthStartDate = null;
+      optionValuePath = "value";
+      optionLabelPath = "label";
+      typeOfDate = null;
+      action = K;
+    };`,
+    `export default class extends Component {
+      role = "sloth"
+
+      @computed.or("asd", "qwe")
+      get levelOfHappiness() {}
+
+      @action
+      foo() {}
+    };`,
+    `export default class extends Component {
+      role = "sloth"
+
+      @computed()
+      get levelOfHappiness() {
+      }
+
+      @action
+      foo() {}
+    };`,
+    {
+      code: `export default class extends Component {
+        role = "sloth"
+
+        @computed()
+        get computed1() {
+        }
+        @alias('computed1')
+        get computed2() {}
+
+        @action
+        foo() {}
+
+        @Ember.inject.service()
+        foobar
+      };`,
+      options: [
+        {
+          order: ['property', 'multi-line-function', 'single-line-function', 'action'],
+        },
+      ],
+    },
+    {
+      code: `export default class extends Component {
+        role = "sloth";
+
+        @alias('computed2')
+        computed1
+
+        @computed()
+        get computed2() {
+        }
+
+        @alias('computed1')
+        get computed3() {}
+
+        @action
+        foo() {}
+
+        @Ember.inject.service()
+        foobar;
+      };`,
+      options: [
+        {
+          order: ['property', ['single-line-function', 'multi-line-function'], 'action'],
+        },
+      ],
+    },
+    `export default class extends Component {
+      role = "sloth";
+      qwe = foo ? 'bar' : null;
+      abc = [];
+      def = {};
+
+      @alias("def")
+      ghi
+    };`,
+    `export default class extends Component {
+      template = hbs\`Hello world {{name}}\`;
+      name = "Jon Snow";
+      @action
+      foo() {}
+    };`,
+    `export default class extends Component {
+      layout = layout;
+      tabindex = -1;
+
+      @computed.reads('count')
+      get someComputedValue() {}
+    };`,
+    `export default class extends Component {
+      onFoo() {}
+
+      @computed.volatile()
+      get foo() {
+      }
+
+      @computed
+      get bar() {}
+    };`,
+    {
+      code: `export default class extends Component {
+        onFoo() {}
+        onFoo = () => {};
+
+        @computed.volatile()
+        get foo() {
+        }
+
+        bar() { const foo = 'bar'}
+      };`,
+      options: [
+        {
+          order: [
+            'property',
+            'empty-method',
+            'single-line-function',
+            'multi-line-function',
+            'method',
+          ],
+        },
+      ],
+      parserOptions: { ecmaVersion: 2022, sourceType: 'module' },
+    },
+    `export default class Test extends Component {
+      role = "sloth"
+
+      get vehicle() {}
+      get levelOfHappiness() {
+        console.log("foobar");
+      }
+
+      constructor() {}
+
+      willDestroy() {}
+
+      @action
+      foo() {}
+    };`,
+    // <-- HERE
+    `export default class Test extends Component {
+      @service() fooService;
+
+      get vehicle() {}
+      get levelOfHappiness() {
+        console.log("foobar");
+      }
+
+      @task
+      *fooTask() {}
+
+      @action
+      foo() {}
+    };`,
+    `export default class Test extends Component {
+      @tracked  
+      role = "sloth";
+
+      get vehicle() {}
+
+      constructor() {}
+
+      fooTask = task(async () => {
+        this.role = "bar";  
+      });
+
+      @action
+      foo() {}
+    };`,
   ],
   invalid: [
     {
