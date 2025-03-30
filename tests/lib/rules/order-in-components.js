@@ -16,7 +16,7 @@ const eslintTester = new RuleTester({
 
 eslintTester.run('order-in-components', rule, {
   valid: [
-    //#region Classic classes - valid
+    // #region Classic classes - valid
     'export default Component.extend();',
     'export default Component.extend({ ...foo });',
     `export default Component.extend({
@@ -365,8 +365,8 @@ eslintTester.run('order-in-components', rule, {
       ],
       parserOptions: { ecmaVersion: 2022, sourceType: 'module' },
     },
-    //#endregion
-    //#region Native classes - valid
+    // #endregion
+    // #region Native classes - valid
     'export default class Component {};',
     `import Component from "@glimmer/component";
     export default class Test extends Component {
@@ -445,14 +445,6 @@ eslintTester.run('order-in-components', rule, {
       @computed("attitude", "health")
       get levelOfHappiness(){}
     };`,
-    // `import Component from '@glimmer/component';
-    // export default class extends Component {
-    //   role = "sloth";
-    //   abc = [];
-    //   def = {};
-
-    //   @alias("def") ghi;
-    // };`,
     `import Component from '@glimmer/component';
     export default class extends Component {
       @computed("attitude", "health")
@@ -478,30 +470,6 @@ eslintTester.run('order-in-components', rule, {
         return true;
       }
     };`,
-    // `import Component from '@glimmer/component';
-    // export default class extends Component {
-    //   @service igh;
-
-    //   abc = [];
-    //   def = true;
-
-    //   @alias("abc") singleComp
-
-    //   @computed()
-    //   get multiComp() {}
-
-    //   @observer("aaa")
-    //   get obs() {}
-
-    //   init() {}
-
-    //   @action
-    //   foo() {}
-
-    //   customFunc() {
-    //     return true;
-    //   }
-    // };`,
     `import Component from '@glimmer/component';
     export default class extends Component {
       init() {
@@ -532,51 +500,6 @@ eslintTester.run('order-in-components', rule, {
       @action
       foo() {}
     };`,
-    // `import Component from '@glimmer/component';
-    // import {inject as service} from '@ember/service';
-    // export default class extends Component {
-    //   @service() test;
-
-    //   get test2() {
-    //     return "asd" === "qwe";
-    //   }
-
-    //   didReceiveAttrs() {
-    //   }
-
-    //   @task({ restartable: true })
-    //   *tSomeAction() {}
-    // };`,
-    // `import Component from '@glimmer/component';
-    // import {inject as service} from '@ember/service';
-    // export default class extends Component {
-    //   @service() test
-
-    //   @computed.equal("asd", "qwe")
-    //   get test2() {}
-
-    //   didReceiveAttrs() {
-    //   }
-
-    //   @task({ restartable: true })
-    //   *tSomeAction() {}
-    // };`,
-    // `import Component from '@glimmer/component';
-    // export default class extends Component {
-    //   @service test
-
-    //   someEmptyMethod() {}
-
-    //   didReceiveAttrs() {
-    //   }
-
-    //   @task({ restartable: true })
-    //   *tSomeAction() {}
-
-    //   _anotherPrivateFnc() {
-    //     return true;
-    //   }
-    // };`,
     `import Component from '@glimmer/component';
     export default class extends Component {
       classNameBindings = ["filterDateSelectClass"];
@@ -588,16 +511,6 @@ eslintTester.run('order-in-components', rule, {
       typeOfDate = null;
       action = K;
     };`,
-    // `import Component from '@glimmer/component';
-    // export default class extends Component {
-    //   role = "sloth"
-
-    //   @computed.or("asd", "qwe")
-    //   get levelOfHappiness() {}
-
-    //   @action
-    //   foo() {}
-    // };`,
     `export default class extends Component {
       role = "sloth"
 
@@ -631,43 +544,6 @@ eslintTester.run('order-in-components', rule, {
         },
       ],
     },
-    // {
-    //   code: `import Component from '@glimmer/component';
-    //   export default class extends Component {
-    //     role = "sloth";
-
-    //     @alias('computed2')
-    //     computed1
-
-    //     @computed()
-    //     get computed2() {
-    //     }
-
-    //     @alias('computed1')
-    //     get computed3() {}
-
-    //     @action
-    //     foo() {}
-
-    //     @Ember.inject.service()
-    //     foobar;
-    //   };`,
-    //   options: [
-    //     {
-    //       order: ['property', ['single-line-function', 'multi-line-function'], 'action'],
-    //     },
-    //   ],
-    // },
-    // `import Component from '@glimmer/component';
-    // export default class extends Component {
-    //   role = "sloth";
-    //   qwe = foo ? 'bar' : null;
-    //   abc = [];
-    //   def = {};
-
-    //   @alias("def")
-    //   ghi
-    // };`,
     `import Component from '@glimmer/component';
     export default class extends Component {
       template = hbs\`Hello world {{name}}\`;
@@ -675,50 +551,6 @@ eslintTester.run('order-in-components', rule, {
       @action
       foo() {}
     };`,
-    // `import Component from '@glimmer/component';
-    // export default class extends Component {
-    //   layout = layout;
-    //   tabindex = -1;
-
-    //   @computed.reads('count')
-    //   get someComputedValue() {}
-    // };`,
-    // `import Component from '@glimmer/component';
-    // export default class extends Component {
-    //   onFoo() {}
-
-    //   @computed.volatile()
-    //   get foo() {
-    //   }
-
-    //   @computed
-    //   get bar() {}
-    // };`,
-    // {
-    //   code: `import Component from '@glimmer/component';
-    //   export default class extends Component {
-    //     onFoo() {}
-    //     onFoo = () => {};
-
-    //     @computed.volatile()
-    //     get foo() {
-    //     }
-
-    //     bar() { const foo = 'bar'}
-    //   };`,
-    //   options: [
-    //     {
-    //       order: [
-    //         'property',
-    //         'empty-method',
-    //         'single-line-function',
-    //         'multi-line-function',
-    //         'method',
-    //       ],
-    //     },
-    //   ],
-    //   parserOptions: { ecmaVersion: 2022, sourceType: 'module' },
-    // },
     {
       code: `import Component from '@glimmer/component';
       export default class extends Component {
@@ -752,41 +584,10 @@ eslintTester.run('order-in-components', rule, {
       @action
       foo() {}
     };`,
-    // `import Component from '@glimmer/component';
-    // export default class Test extends Component {
-    //   @service() fooService;
-
-    //   get vehicle() {}
-    //   get levelOfHappiness() {
-    //     console.log("foobar");
-    //   }
-
-    //   @task
-    //   *fooTask() {}
-
-    //   @action
-    //   foo() {}
-    // };`,
-    // `import Component from '@glimmer/component';
-    // export default class Test extends Component {
-    //   @tracked
-    //   role = "sloth";
-
-    //   get vehicle() {}
-
-    //   constructor() {}
-
-    //   fooTask = task(async () => {
-    //     this.role = "bar";
-    //   });
-
-    //   @action
-    //   foo() {}
-    // };`,
-    //#endregion
+    // #endregion
   ],
   invalid: [
-    //#region Classic classes - invalid
+    // #region Classic classes - invalid
     {
       code: `export default Component.extend({
         actions: {},
@@ -1498,6 +1299,39 @@ eslintTester.run('order-in-components', rule, {
         },
       ],
     },
-    //#endregion
+    // #endregion
+    // #region Native classes - invalid
+    {
+      code: `import Component from '@glimmer/component';
+        export default class Foo extends Component {
+          @action
+          foo() {}
+
+          role = "sloth";
+  
+          vehicle;
+
+          @computed('attitude', 'health')
+          get levelOfHappiness() {
+          }
+        };`,
+      output: ``,
+      errors: [
+        {
+          message: 'The "role" property should be above the actions hash on line 2',
+          line: 4,
+        },
+        {
+          message: 'The "vehicle" single-line function should be above the actions hash on line 2',
+          line: 6,
+        },
+        {
+          message:
+            'The "levelOfHappiness" multi-line function should be above the actions hash on line 2',
+          line: 8,
+        },
+      ],
+    },
+    // #endregion
   ],
 });

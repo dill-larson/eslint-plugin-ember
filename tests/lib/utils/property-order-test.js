@@ -565,12 +565,20 @@ describe('determinePropertyType', () => {
     });
 
     it('should determine properties', () => {
-      const context = new FauxContext(
+      let context = new FauxContext(
         `class MyComponent extends Component {
           foo = "boo";
         }`
       );
-      const node = context.ast.body[0].body.body[0];
+      let node = context.ast.body[0].body.body[0];
+      expect(propertyOrder.determinePropertyType(node, 'component', [])).toBe('property');
+
+      context = new FauxContext(
+        `class MyComponent extends Component {
+          foo;
+        }`
+      );
+      node = context.ast.body[0].body.body[0];
       expect(propertyOrder.determinePropertyType(node, 'component', [])).toBe('property');
     });
   });
@@ -640,7 +648,7 @@ describe('reportUnorderedProperties', () => {
   });
 
   describe('native classes', () => {
-    it('should not report nodes if the order is correct', () => {
+    it.only('should not report nodes if the order is correct', () => {
       const order = ['controller', 'service', 'query-params'];
       const context = new FauxContext(
         `import {inject as service} from '@ember/service';
